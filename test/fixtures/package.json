@@ -1,0 +1,13 @@
+{
+  "name": "tce-example",
+  "version": "0.0.0",
+  "private": true,
+  "tailor": {
+    "label": "TCE Example",
+    "type": "TCE_EXAMPLE",
+    "ui": {
+      "icon": "mdi-pencil",
+      "forceFullWidth": false
+    }
+  }
+}

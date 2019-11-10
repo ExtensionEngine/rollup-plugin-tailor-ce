@@ -1,0 +1,54 @@
+{
+  "name": "@extensionengine/rollup-plugin-tailor-tce",
+  "version": "0.0.0",
+  "description": "Rollup plugin for building Tailor content elements",
+  "homepage": "https://github.com/ExtensionEngine/rollup-plugin-tailor-tce#readme",
+  "bugs": {
+    "url": "https://github.com/ExtensionEngine/rollup-plugin-tailor-tce/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ExtensionEngine/rollup-plugin-tailor-tce.git"
+  },
+  "license": "MIT",
+  "author": "ExtensionEngine <info@extensionengine.com>",
+  "files": [
+    "index.js",
+    "__plugin__.js"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "postshrinkwrap": "rewrite-lockfile package-lock.json",
+    "test": "jest"
+  },
+  "dependencies": {
+    "mustache": "^3.1.0",
+    "read-pkg-up": "^7.0.0",
+    "rollup-plugin-virtual": "^1.0.1"
+  },
+  "devDependencies": {
+    "@extensionengine/eslint-config": "^1.1.0",
+    "@extensionengine/stylelint-config": "^1.1.0",
+    "babel-eslint": "^10.0.3",
+    "bili": "^4.8.1",
+    "eslint": "^6.6.0",
+    "eslint-config-semistandard": "^15.0.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "eslint-plugin-vue": "^6.0.0",
+    "jest": "^24.9.0",
+    "require-from-string": "^2.0.2",
+    "rewrite-lockfile": "^1.0.1",
+    "rollup": "^1.26.4",
+    "rollup-plugin-vue": "^5.1.2",
+    "stylelint": "^11.1.1",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
