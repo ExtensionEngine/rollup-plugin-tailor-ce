@@ -1,6 +1,6 @@
 {
   "name": "@extensionengine/rollup-plugin-tailor-ce",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Rollup plugin for building Tailor content elements",
   "homepage": "https://github.com/ExtensionEngine/rollup-plugin-tailor-ce#readme",
   "bugs": {
