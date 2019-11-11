@@ -23,6 +23,7 @@
     "lint": "eslint .",
     "release": "npx np",
     "postshrinkwrap": "rewrite-lockfile package-lock.json",
+    "pretest": "npm run build",
     "test": "jest"
   },
   "dependencies": {

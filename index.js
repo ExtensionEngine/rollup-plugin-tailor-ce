@@ -26,6 +26,7 @@ module.exports = () => ({
       entryPath: normalize(entry)
     });
     options.plugins.push(virtual({ [name]: code }));
+    options.shimMissingExports = true;
     // Set `options.input` to newly created entry.
     const input = { [pkg.name]: name };
     return Object.assign(options, { input });

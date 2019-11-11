@@ -1,5 +1,6 @@
+import * as plugin from '{{{entryPath}}}';
+import plugin__default, { install as install$1 } from '{{{entryPath}}}';
 import { tailor, version, name } from '{{{packagePath}}}';
-import tce from '{{{entryPath}}}';
 
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null) return {};
@@ -186,8 +187,12 @@ var paramCase = function (value, locale) {
   return noCase(value, locale, '-')
 };
 
-var initState = tce.initState,
-    Components = _objectWithoutProperties(tce, ["initState"]);
+var initState = plugin__default.initState,
+    Components = _objectWithoutProperties(plugin__default, ["initState"]);
+
+var hasProp = function hasProp(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+};
 
 var isFunction = function isFunction(arg) {
   return typeof arg === 'function';
@@ -198,7 +203,10 @@ var config = Object.assign({}, Components, {}, tailor, {
   version: version
 });
 var install = function install(Vue) {
-  if (isFunction(tce.setup)) tce.setup(Vue);
+  if (hasProp(plugin, 'install')) {
+    isFunction(install$1) && install$1(Vue);
+  }
+
   Object.entries(Components).forEach(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
         name$1 = _ref2[0],
