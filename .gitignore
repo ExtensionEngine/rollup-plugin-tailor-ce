@@ -14,4 +14,5 @@ npm-debug.log*
 # general
 .DS_Store
 
+test/.tmp*
 stats.html

@@ -3,15 +3,25 @@
 /* eslint-env jest */
 
 const { createLocalVue, mount } = require('@vue/test-utils');
+const { mkdirSync, writeFile } = require('fs');
 const { Bundler } = require('bili');
+const del = require('del');
 const path = require('path');
 const pkg = require('./fixtures/package.json');
 const requireFromString = require('require-from-string');
 
+const isDebug = process.env.DEBUG;
 const outputFilename = `${pkg.name}.js`;
 const rootDir = path.join(__dirname, './fixtures/');
 
-let asset = null;
+let asset;
+let tmpDir;
+
+if (isDebug) {
+  del.sync(path.join(__dirname, '.tmp*'));
+  tmpDir = path.join(__dirname, `.tmp_${Date.now()}`);
+  mkdirSync(tmpDir);
+}
 
 process.chdir(rootDir);
 
@@ -20,6 +30,9 @@ test('compile example using bili', async () => {
   const [bundle] = bundles;
   asset = bundle.get(outputFilename);
   expect(asset && asset.source).toContain(pkg.tailor.type);
+  if (isDebug) {
+    return writeFile(path.join(tmpDir, outputFilename), asset.source, 'utf-8');
+  }
 });
 
 test('verify correct exports layout', async () => {
