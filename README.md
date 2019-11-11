@@ -11,3 +11,18 @@ This package provides [rollup](https://rollupjs.org) plugin for building [tailor
 ```
 $ npm install -D @extensionengine/rollup-plugin-tailor-ce
 ```
+
+## Usage
+
+Add plugin to your `bili.config.js`:
+
+```js
+module.exports = {
+  plugins: {
+    'tailor-ce': true
+  },
+  resolvePlugins: {
+    'tailor-ce': require('@extensionengine/rollup-plugin-tailor-ce')
+  }
+};
+```
