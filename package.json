@@ -21,6 +21,7 @@
     "prebuild": "del-cli dist",
     "build": "bili",
     "lint": "eslint .",
+    "release": "npx np",
     "postshrinkwrap": "rewrite-lockfile package-lock.json",
     "test": "jest"
   },
