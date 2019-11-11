@@ -10,7 +10,8 @@
 export default {
   name: 'tce-example',
   props: {
-    element: { type: Object, required: true }
+    element: { type: Object, required: true },
+    isFocused: { type: Boolean, default: false }
   },
   data() {
     const { data = {} } = this.element;

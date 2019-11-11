@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  name: 'hello-world',
+  name: 'greet',
   props: {
     name: { type: String, required: true }
   }

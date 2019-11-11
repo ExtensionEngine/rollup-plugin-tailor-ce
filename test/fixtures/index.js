@@ -1,8 +1,8 @@
 import Edit from './Edit.vue';
-import HelloWorld from './HelloWorld.vue';
+import Greet from './Greet.vue';
 
 export default {
   initState: () => ({}),
   Edit,
-  HelloWorld
+  Greet
 };
