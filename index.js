@@ -6,7 +6,7 @@ const { readFileSync } = require('fs');
 const { render } = require('mustache');
 const virtual = require('rollup-plugin-virtual');
 
-const PLUGIN_ENTRY = require.resolve('./__plugin__');
+const PLUGIN_ENTRY = require.resolve('./dist/__plugin__');
 const TCE_REGISTRY = '__TAILOR_CONTENT_ELEMENTS__';
 
 const moduleName = name => [TCE_REGISTRY, name].join('.');

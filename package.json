@@ -14,10 +14,12 @@
   "author": "ExtensionEngine <info@extensionengine.com>",
   "files": [
     "index.js",
-    "__plugin__.js"
+    "dist"
   ],
   "main": "index.js",
   "scripts": {
+    "prebuild": "del-cli dist",
+    "build": "bili",
     "lint": "eslint .",
     "postshrinkwrap": "rewrite-lockfile package-lock.json",
     "test": "jest"
@@ -32,7 +34,7 @@
     "@vue/test-utils": "^1.0.0-beta.29",
     "babel-eslint": "^10.0.3",
     "bili": "^4.8.1",
-    "change-case": "^3.1.0",
+    "del-cli": "^3.0.0",
     "eslint": "^6.6.0",
     "eslint-config-semistandard": "^15.0.0",
     "eslint-config-standard": "^14.1.0",
@@ -42,6 +44,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.0.0",
     "jest": "^24.9.0",
+    "param-case": "^2.1.1",
     "require-from-string": "^2.0.2",
     "rewrite-lockfile": "^1.0.1",
     "rollup": "^1.26.4",

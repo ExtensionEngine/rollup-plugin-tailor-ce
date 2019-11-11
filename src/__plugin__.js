@@ -1,5 +1,5 @@
 import { name as packageName, tailor, version } from '{{{packagePath}}}';
-import { kebabCase } from 'change-case';
+import kebabCase from 'param-case';
 import tce from '{{{entryPath}}}';
 
 const { initState, ...Components } = tce;

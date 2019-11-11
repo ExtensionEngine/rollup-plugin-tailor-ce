@@ -4,7 +4,7 @@ module.exports = {
   root: true,
   extends: '@extensionengine',
   overrides: [{
-    files: ['__plugin__.js', 'test/fixtures/**'],
+    files: ['src/**', 'test/fixtures/**'],
     parserOptions: {
       parser: 'babel-eslint',
       sourceType: 'module'
