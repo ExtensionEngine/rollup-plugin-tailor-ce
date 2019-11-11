@@ -1,14 +1,14 @@
 {
-  "name": "@extensionengine/rollup-plugin-tailor-tce",
+  "name": "@extensionengine/rollup-plugin-tailor-ce",
   "version": "0.0.0",
   "description": "Rollup plugin for building Tailor content elements",
-  "homepage": "https://github.com/ExtensionEngine/rollup-plugin-tailor-tce#readme",
+  "homepage": "https://github.com/ExtensionEngine/rollup-plugin-tailor-ce#readme",
   "bugs": {
-    "url": "https://github.com/ExtensionEngine/rollup-plugin-tailor-tce/issues"
+    "url": "https://github.com/ExtensionEngine/rollup-plugin-tailor-ce/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ExtensionEngine/rollup-plugin-tailor-tce.git"
+    "url": "git+https://github.com/ExtensionEngine/rollup-plugin-tailor-ce.git"
   },
   "license": "MIT",
   "author": "ExtensionEngine <info@extensionengine.com>",
