@@ -1,4 +1,4 @@
-import pkg, { tailor, version } from '{{{packagePath}}}';
+import { name as packageName, tailor, version } from '{{{packagePath}}}';
 import { kebabCase } from 'change-case';
 import tce from '{{{entryPath}}}';
 
@@ -17,8 +17,8 @@ export const install = Vue => {
   if (isFunction(tce.setup)) tce.setup(Vue);
   Object.entries(Components).forEach(([name, Component]) => {
     name = kebabCase(name);
-    if (name === 'edit') Vue.component(pkg.name, Component);
-    Vue.component(`${pkg.name}--${name}`, Component);
+    if (name === 'edit') Vue.component(packageName, Component);
+    Vue.component(`${packageName}--${name}`, Component);
   });
 };
 
