@@ -2,6 +2,7 @@
 
 /* eslint-env jest */
 
+const { createLocalVue, mount } = require('@vue/test-utils');
 const { Bundler } = require('bili');
 const path = require('path');
 const pkg = require('./fixtures/package.json');
@@ -22,13 +23,43 @@ test('compile example using bili', async () => {
 });
 
 test('verify correct exports layout', async () => {
-  const tce = requireFromString(asset.source);
-  expect(typeof tce.default).toBe('function');
-  expect(typeof tce.install).toBe('function');
-  expect(tce.config.label).toEqual(pkg.tailor.label);
-  expect(tce.config.type).toEqual(pkg.tailor.type);
-  expect(tce.config.ui).toEqual(pkg.tailor.ui);
-  expect(tce.config.version).toEqual(pkg.version);
+  const plugin = requireFromString(asset.source);
+  expect(typeof plugin.default).toBe('function');
+  expect(typeof plugin.install).toBe('function');
+  expect(plugin.config.label).toEqual(pkg.tailor.label);
+  expect(plugin.config.type).toEqual(pkg.tailor.type);
+  expect(plugin.config.ui).toEqual(pkg.tailor.ui);
+  expect(plugin.config.version).toEqual(pkg.version);
+});
+
+test('register content element', async () => {
+  const plugin = requireFromString(asset.source);
+  const localVue = createLocalVue();
+  localVue.use(plugin);
+  expect(localVue.component('tce-example')).toBe(localVue.component('tce-example--edit'));
+  const EditCtor = localVue.component('tce-example');
+  const GreetCtor = localVue.component('tce-example--greet');
+  expect(EditCtor && EditCtor.options).toMatchObject(plugin.config.Edit);
+  expect(GreetCtor && GreetCtor.options).toMatchObject(plugin.config.Greet);
+});
+
+test('mount edit component', async () => {
+  const plugin = requireFromString(asset.source);
+  const element = {
+    data: {
+      content: 'Hello world!'
+    }
+  };
+  const propsData = { element, isFocused: false };
+  const wrapper = mount(plugin.config.Edit, { propsData });
+  expect(wrapper.html()).toBe('<div class="tce-example"><div>Hello world!</div></div>');
+});
+
+test('mount other component', async () => {
+  const plugin = requireFromString(asset.source);
+  const propsData = { name: 'Tailor' };
+  const wrapper = mount(plugin.config.Greet, { propsData });
+  expect(wrapper.html()).toBe('<p>Hello Tailor!</p>');
 });
 
 function compile() {

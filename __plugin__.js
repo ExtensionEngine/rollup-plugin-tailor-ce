@@ -1,10 +1,9 @@
-import { name, tailor, version } from '{{{packagePath}}}';
+import pkg, { tailor, version } from '{{{packagePath}}}';
+import { kebabCase } from 'change-case';
 import tce from '{{{entryPath}}}';
 
 const { initState, ...Components } = tce;
 
-const componentName = Component => [name, Component.name].join('--');
-const isEditView = Component => Component.name.toLowerCase() === 'edit';
 const isFunction = arg => typeof arg === 'function';
 
 export const config = {
@@ -16,10 +15,10 @@ export const config = {
 
 export const install = Vue => {
   if (isFunction(tce.setup)) tce.setup(Vue);
-  Object.values(Components).forEach(Component => {
-    if (isEditView(Component)) Vue.component(name, Component);
-    Component.name = componentName(Component);
-    Vue.component(Component.name, Component);
+  Object.entries(Components).forEach(([name, Component]) => {
+    name = kebabCase(name);
+    if (name === 'edit') Vue.component(pkg.name, Component);
+    Vue.component(`${pkg.name}--${name}`, Component);
   });
 };
 
