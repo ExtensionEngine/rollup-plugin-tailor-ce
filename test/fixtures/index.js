@@ -1,8 +1,12 @@
 import Edit from './Edit.vue';
 import Greet from './Greet.vue';
 
+export { Edit, Greet };
+
 export default {
   initState: () => ({}),
-  Edit,
-  Greet
+  components: {
+    Edit,
+    Greet
+  }
 };

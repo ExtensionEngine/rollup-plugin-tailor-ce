@@ -4,38 +4,57 @@ const { packageJson: pkg, path: packagePath } = require('read-pkg-up').sync();
 const path = require('path');
 const { readFileSync } = require('fs');
 const { render } = require('mustache');
-const virtual = require('rollup-plugin-virtual');
 
-const PLUGIN_ENTRY = require.resolve('./dist/__plugin__');
-const TCE_REGISTRY = '__TAILOR_CONTENT_ELEMENTS__';
+const NAME = '@extensionengine/tailor-ce';
+const PREFIX = '\0virtual:';
+const REGISTRY = '__TAILOR_CONTENT_ELEMENTS__';
+const TEMPLATE = readFileSync(require.resolve('./dist/__plugin__'), 'utf-8');
 
-const moduleName = name => [TCE_REGISTRY, name].join('.');
+const isObject = arg => arg !== null && typeof arg === 'object';
 const normalize = modulePath => path.resolve(process.cwd(), modulePath);
 
-module.exports = () => ({
-  /**
-   * @param {import('rollup').InputOptions} options
-   */
-  options(options) {
-    // Create virtual entry module.
-    const [entry] = Object.values(options.input);
-    const name = path.basename(PLUGIN_ENTRY, path.extname(PLUGIN_ENTRY));
-    const template = readFileSync(PLUGIN_ENTRY, 'utf-8');
-    const code = render(template, {
-      packagePath: normalize(packagePath),
-      entryPath: normalize(entry)
-    });
-    options.plugins.push(virtual({ [name]: code }));
-    options.shimMissingExports = true;
-    // Set `options.input` to newly created entry.
-    const input = { [pkg.name]: name };
-    return Object.assign(options, { input });
-  },
-  /**
-   * @param {import('rollup').OutputOptions} options
-   */
-  outputOptions(options) {
-    const name = moduleName(pkg.name);
-    return Object.assign(options, { name });
-  }
-});
+module.exports = function () {
+  let entryId;
+  let entryCode;
+
+  return {
+    name: NAME,
+    /** @param {import('rollup').InputOptions} options */
+    options(options) {
+      // Create virtual entry module.
+      const [entry] = getInput(options.input);
+      const entryPath = normalize(entry);
+      entryId = [PREFIX, entryPath].join('');
+      entryCode = render(TEMPLATE, {
+        packagePath: normalize(packagePath),
+        entryPath
+      });
+      // Set `options.input` to newly created entry.
+      const input = { [pkg.name]: entryId };
+      return Object.assign(options, { input, shimMissingExports: true });
+    },
+    /** @param {import('rollup').OutputOptions} options */
+    outputOptions(options) {
+      const name = [REGISTRY, pkg.name].join('.');
+      return Object.assign(options, { name });
+    },
+    /** @param {string} id */
+    resolveId(id) {
+      return id === entryId ? id : null;
+    },
+    /** @param {string} id */
+    load(id) {
+      return id === entryId ? entryCode : null;
+    }
+  };
+};
+
+/**
+ * @param {import('rollup').InputOption} input
+ * @return {Array<string>}
+ */
+function getInput(input) {
+  if (isObject(input)) return Object.values(input);
+  if (Array.isArray(input)) return input;
+  return [input];
+}

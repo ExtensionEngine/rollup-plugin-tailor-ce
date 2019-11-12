@@ -1,42 +1,7 @@
 import * as plugin from '{{{entryPath}}}';
 import plugin__default, { install as install$1 } from '{{{entryPath}}}';
-import { tailor, version, name } from '{{{packagePath}}}';
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
+export * from '{{{entryPath}}}';
+import { version, tailor, name } from '{{{packagePath}}}';
 
 function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
@@ -187,9 +152,6 @@ var paramCase = function (value, locale) {
   return noCase(value, locale, '-')
 };
 
-var initState = plugin__default.initState,
-    Components = _objectWithoutProperties(plugin__default, ["initState"]);
-
 var hasProp = function hasProp(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 };
@@ -197,24 +159,30 @@ var hasProp = function hasProp(obj, prop) {
 var isFunction = function isFunction(arg) {
   return typeof arg === 'function';
 };
-
-var config = Object.assign({}, Components, {}, tailor, {
+var _contentElement$initS = plugin__default.initState,
+    initState = _contentElement$initS === void 0 ? function () {
+  return {};
+} : _contentElement$initS,
+    _contentElement$compo = plugin__default.components,
+    components = _contentElement$compo === void 0 ? {} : _contentElement$compo;
+var config = Object.assign({
+  version: version,
   initState: initState,
-  version: version
-});
+  components: components
+}, tailor);
 var install = function install(Vue) {
   if (hasProp(plugin, 'install')) {
     isFunction(install$1) && install$1(Vue);
   }
 
-  Object.entries(Components).forEach(function (_ref) {
+  Object.entries(components).forEach(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
         name$1 = _ref2[0],
-        Component = _ref2[1];
+        component = _ref2[1];
 
     name$1 = paramCase(name$1);
-    if (name$1 === 'edit') Vue.component(name, Component);
-    Vue.component("".concat(name, "--").concat(name$1), Component);
+    if (name$1 === 'edit') Vue.component(name, component);
+    Vue.component("".concat(name, "--").concat(name$1), component);
   });
 };
 

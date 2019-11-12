@@ -10,6 +10,8 @@ const path = require('path');
 const pkg = require('./fixtures/package.json');
 const requireFromString = require('require-from-string');
 
+const isObject = arg => arg !== null && typeof arg === 'object';
+
 const isDebug = process.env.DEBUG;
 const outputFilename = `${pkg.name}.js`;
 const rootDir = path.join(__dirname, './fixtures/');
@@ -35,43 +37,54 @@ test('compile example using bili', async () => {
   }
 });
 
-test('verify correct exports layout', async () => {
+test('verify default exports', async () => {
   const plugin = requireFromString(asset.source);
   expect(typeof plugin.default).toBe('function');
   expect(typeof plugin.install).toBe('function');
-  expect(plugin.config.label).toEqual(pkg.tailor.label);
-  expect(plugin.config.type).toEqual(pkg.tailor.type);
-  expect(plugin.config.ui).toEqual(pkg.tailor.ui);
-  expect(plugin.config.version).toEqual(pkg.version);
+  const { config } = plugin;
+  expect(typeof config.initState).toBe('function');
+  expect(isObject(config.components)).toBe(true);
+  expect(config.version).toEqual(pkg.version);
+  expect(config.label).toEqual(pkg.tailor.label);
+  expect(config.type).toEqual(pkg.tailor.type);
+  expect(config.ui).toEqual(pkg.tailor.ui);
+});
+
+test('verify named exports', async () => {
+  const plugin = requireFromString(asset.source);
+  const { config, Edit, Greet } = plugin;
+  expect(config.components.Edit).toBe(Edit);
+  expect(config.components.Greet).toBe(Greet);
 });
 
 test('register content element', async () => {
   const plugin = requireFromString(asset.source);
   const localVue = createLocalVue();
   localVue.use(plugin);
+  const { config } = plugin;
   expect(localVue.component('tce-example')).toBe(localVue.component('tce-example--edit'));
   const EditCtor = localVue.component('tce-example');
   const GreetCtor = localVue.component('tce-example--greet');
-  expect(EditCtor && EditCtor.options).toMatchObject(plugin.config.Edit);
-  expect(GreetCtor && GreetCtor.options).toMatchObject(plugin.config.Greet);
+  expect(EditCtor && EditCtor.options).toMatchObject(config.components.Edit);
+  expect(GreetCtor && GreetCtor.options).toMatchObject(config.components.Greet);
 });
 
 test('mount edit component', async () => {
-  const plugin = requireFromString(asset.source);
+  const { config } = requireFromString(asset.source);
   const element = {
     data: {
       content: 'Hello world!'
     }
   };
   const propsData = { element, isFocused: false };
-  const wrapper = mount(plugin.config.Edit, { propsData });
+  const wrapper = mount(config.components.Edit, { propsData });
   expect(wrapper.html()).toBe('<div class="tce-example"><div>Hello world!</div></div>');
 });
 
-test('mount other component', async () => {
-  const plugin = requireFromString(asset.source);
+test('mount greet component', async () => {
+  const { config } = requireFromString(asset.source);
   const propsData = { name: 'Tailor' };
-  const wrapper = mount(plugin.config.Greet, { propsData });
+  const wrapper = mount(config.components.Greet, { propsData });
   expect(wrapper.html()).toBe('<p>Hello Tailor!</p>');
 });
 
