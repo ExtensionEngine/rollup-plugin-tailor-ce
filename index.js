@@ -8,6 +8,7 @@ const { render } = require('mustache');
 const NAME = '@extensionengine/tailor-ce';
 const PREFIX = '\0virtual:';
 const REGISTRY = '__TAILOR_CONTENT_ELEMENTS__';
+const SCOPE = /^@[^/]+\//;
 const TEMPLATE = readFileSync(require.resolve('./dist/__plugin__'), 'utf-8');
 
 const isObject = arg => arg !== null && typeof arg === 'object';
@@ -30,7 +31,8 @@ module.exports = function () {
         entryPath
       });
       // Set `options.input` to newly created entry.
-      const input = { [pkg.name]: entryId };
+      const entryName = pkg.name.replace(SCOPE, '');
+      const input = { [entryName]: entryId };
       return Object.assign(options, { input, shimMissingExports: true });
     },
     /** @param {import('rollup').OutputOptions} options */
