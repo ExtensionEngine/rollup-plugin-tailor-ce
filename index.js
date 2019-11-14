@@ -9,7 +9,7 @@ const NAME = '@extensionengine/tailor-ce';
 const PREFIX = '\0virtual:';
 const REGISTRY = '__TAILOR_CONTENT_ELEMENTS__';
 const SCOPE = /^@[^/]+\//;
-const TEMPLATE = readFileSync(require.resolve('./dist/__plugin__'), 'utf-8');
+const TEMPLATE = readFileSync(require.resolve('./dist/plugin'), 'utf-8');
 
 const isObject = arg => arg !== null && typeof arg === 'object';
 const normalize = modulePath => path.resolve(process.cwd(), modulePath);

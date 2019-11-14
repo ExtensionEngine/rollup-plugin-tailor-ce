@@ -1,5 +1,5 @@
-import contentElement, * as plugin from '{{{entryPath}}}';
 import { name as packageName, tailor, version } from '{{{packagePath}}}';
+import pluginOptions, * as plugin from '{{{entryPath}}}';
 import kebabCase from 'param-case';
 
 const hasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
@@ -10,9 +10,9 @@ export * from '{{{entryPath}}}';
 const {
   initState = () => ({}),
   components = {}
-} = contentElement;
+} = pluginOptions;
 
-export const config = {
+export const options = {
   version,
   initState,
   components,

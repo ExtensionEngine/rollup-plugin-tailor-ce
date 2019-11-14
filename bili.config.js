@@ -2,10 +2,10 @@
 
 /** @type {import('bili').Config} */
 module.exports = {
-  input: './src/__plugin__.js',
+  input: './src/plugin.js',
   output: {
     format: 'esm',
-    fileName: '__plugin__.js'
+    fileName: '[name].js'
   },
   bundleNodeModules: true
 };
