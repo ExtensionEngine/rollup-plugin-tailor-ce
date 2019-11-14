@@ -18,8 +18,9 @@
   ],
   "main": "index.js",
   "scripts": {
-    "prebuild": "del-cli dist",
+    "prebuild": "npm run clean",
     "build": "bili",
+    "clean": "del-cli dist test/.tmp_*",
     "lint": "eslint .",
     "release": "npx np",
     "postshrinkwrap": "rewrite-lockfile package-lock.json",
@@ -35,7 +36,6 @@
     "@vue/test-utils": "^1.0.0-beta.29",
     "babel-eslint": "^10.0.3",
     "bili": "^4.8.1",
-    "del": "^5.1.0",
     "del-cli": "^3.0.0",
     "eslint": "^6.6.0",
     "eslint-config-semistandard": "^15.0.0",

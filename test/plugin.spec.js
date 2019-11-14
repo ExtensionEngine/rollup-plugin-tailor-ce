@@ -5,7 +5,6 @@
 const { createLocalVue, mount } = require('@vue/test-utils');
 const { mkdirSync, writeFile } = require('fs');
 const { Bundler } = require('bili');
-const del = require('del');
 const path = require('path');
 const pkg = require('./fixtures/package.json');
 const requireFromString = require('require-from-string');
@@ -20,7 +19,6 @@ let asset;
 let tmpDir;
 
 if (isDebug) {
-  del.sync(path.join(__dirname, '.tmp*'));
   tmpDir = path.join(__dirname, `.tmp_${Date.now()}`);
   mkdirSync(tmpDir);
 }
