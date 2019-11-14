@@ -8,10 +8,13 @@ const { render } = require('mustache');
 const NAME = '@extensionengine/tailor-ce';
 const PREFIX = '\0virtual:';
 const REGISTRY = '__TAILOR_CONTENT_ELEMENTS__';
+const OPTIONAL_EXPORTS = ['install'];
 const SCOPE = /^@[^/]+\//;
 const TEMPLATE = readFileSync(require.resolve('./dist/plugin'), 'utf-8');
 
 const isObject = arg => arg !== null && typeof arg === 'object';
+const isString = arg => typeof arg === 'string';
+const noop = () => {};
 const normalize = modulePath => path.resolve(process.cwd(), modulePath);
 
 module.exports = function () {
@@ -33,7 +36,14 @@ module.exports = function () {
       // Set `options.input` to newly created entry.
       const entryName = pkg.name.replace(SCOPE, '');
       const input = { [entryName]: entryId };
-      return Object.assign(options, { input, shimMissingExports: true });
+      Object.assign(options, { input, shimMissingExports: true });
+      // Override `options.onwarn` handler to silence shimmed export warning.
+      const { onwarn: warn = noop } = options;
+      options.onwarn = function (warning) {
+        if (onwarn.call(this, entry, warning)) return;
+        warn.apply(this, arguments);
+      };
+      return options;
     },
     /** @param {import('rollup').OutputOptions} options */
     outputOptions(options) {
@@ -50,6 +60,19 @@ module.exports = function () {
     }
   };
 };
+
+/**
+ * @param {string} entryPath
+ * @param {import('rollup').RollupWarning} warning
+ * @returns {boolean}
+ */
+function onwarn(entryPath, warning) {
+  if (isString(warning)) return false;
+  const code = (warning.code || '').toLowerCase();
+  return code === 'shimmed_export' &&
+    OPTIONAL_EXPORTS.includes(warning.exportName) &&
+    normalize(warning.exporter) === normalize(entryPath);
+}
 
 /**
  * @param {import('rollup').InputOption} input
