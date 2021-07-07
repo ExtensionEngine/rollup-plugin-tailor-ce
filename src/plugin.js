@@ -1,6 +1,6 @@
 import { name as packageName, tailor, version } from '{{{packagePath}}}';
 import pluginOptions, * as plugin from '{{{entryPath}}}';
-import kebabCase from 'param-case';
+import { paramCase } from 'param-case';
 
 const hasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
 const isFunction = arg => typeof arg === 'function';
@@ -24,7 +24,7 @@ export const install = Vue => {
     isFunction(plugin.install) && plugin.install(Vue);
   }
   Object.entries(components).forEach(([name, component]) => {
-    name = kebabCase(name);
+    name = paramCase(name);
     if (name === 'edit') Vue.component(packageName, component);
     Vue.component(`${packageName}--${name}`, component);
   });

@@ -58,7 +58,9 @@ test('verify named exports', async () => {
 test('register content element', async () => {
   const plugin = requireFromString(asset.source);
   const localVue = createLocalVue();
+  localVue.onInstall = jest.fn();
   localVue.use(plugin);
+  expect(localVue.onInstall).toHaveBeenCalled();
   const { options } = plugin;
   expect(localVue.component('tce-example')).toBe(localVue.component('tce-example--edit'));
   const EditCtor = localVue.component('tce-example');
@@ -76,14 +78,14 @@ test('mount edit component', async () => {
   };
   const propsData = { element, isFocused: false };
   const wrapper = mount(options.components.Edit, { propsData });
-  expect(wrapper.html()).toBe('<div class="tce-example"><div>Hello world!</div></div>');
+  expect(wrapper.html()).toMatch(/<div class="tce-example">\s*<div>Hello world!<\/div>\s*<\/div>/);
 });
 
 test('mount greet component', async () => {
   const { options } = requireFromString(asset.source);
   const propsData = { name: 'Tailor' };
   const wrapper = mount(options.components.Greet, { propsData });
-  expect(wrapper.html()).toBe('<p>Hello Tailor!</p>');
+  expect(wrapper.html()).toMatch(/<p>Hello Tailor!<\/p>/);
 });
 
 function compile() {
@@ -92,7 +94,8 @@ function compile() {
     input: 'index.js',
     output: {
       format: 'cjs',
-      dir: process.cwd()
+      dir: process.cwd(),
+      fileName: outputFilename
     },
     bundleNodeModules: ['rollup-plugin-vue', 'vue-runtime-helpers'],
     plugins: {
@@ -105,7 +108,7 @@ function compile() {
   };
   /** @type {import('bili').Options} */
   const options = {
-    logLevel: 'quiet',
+    logLevel: isDebug ? 'verbose' : 'quiet',
     configFile: 'false',
     rootDir
   };

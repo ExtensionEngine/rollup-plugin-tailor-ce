@@ -1,33 +1,34 @@
 'use strict';
 
-const { packageJson: pkg, path: packagePath } = require('read-pkg-up').sync();
 const path = require('path');
 const { readFileSync } = require('fs');
+const readPkgUp = require('read-pkg-up');
 const { render } = require('mustache');
 
 const NAME = '@extensionengine/tailor-ce';
 const PREFIX = '\0virtual:';
 const REGISTRY = '__TAILOR_CONTENT_ELEMENTS__';
-const OPTIONAL_EXPORTS = ['install'];
 const SCOPE = /^@[^/]+\//;
 const TEMPLATE = readFileSync(require.resolve('./dist/plugin'), 'utf-8');
 
 const isObject = arg => arg !== null && typeof arg === 'object';
-const isString = arg => typeof arg === 'string';
-const noop = () => {};
 const normalize = modulePath => path.resolve(process.cwd(), modulePath);
 
 module.exports = function () {
   let entryId;
   let entryCode;
+  let pkg;
 
   return {
     name: NAME,
     /** @param {import('rollup').InputOptions} options */
-    options(options) {
+    async options(options) {
       // Create virtual entry module.
       const [entry] = getInput(options.input);
       const entryPath = normalize(entry);
+      const cwd = path.dirname(entryPath);
+      const { packageJson, path: packagePath } = await readPkgUp({ cwd });
+      pkg = packageJson;
       entryId = [PREFIX, entryPath].join('');
       entryCode = render(TEMPLATE, {
         packagePath: normalize(packagePath),
@@ -36,13 +37,7 @@ module.exports = function () {
       // Set `options.input` to newly created entry.
       const entryName = pkg.name.replace(SCOPE, '');
       const input = { [entryName]: entryId };
-      Object.assign(options, { input, shimMissingExports: true });
-      // Override `options.onwarn` handler to silence shimmed export warning.
-      const { onwarn: warn = noop } = options;
-      options.onwarn = function (warning) {
-        if (onwarn.call(this, entry, warning)) return;
-        warn.apply(this, arguments);
-      };
+      Object.assign(options, { input });
       return options;
     },
     /** @param {import('rollup').OutputOptions} options */
@@ -60,19 +55,6 @@ module.exports = function () {
     }
   };
 };
-
-/**
- * @param {string} entryPath
- * @param {import('rollup').RollupWarning} warning
- * @returns {boolean}
- */
-function onwarn(entryPath, warning) {
-  if (isString(warning)) return false;
-  const code = (warning.code || '').toLowerCase();
-  return code === 'shimmed_export' &&
-    OPTIONAL_EXPORTS.includes(warning.exportName) &&
-    normalize(warning.exporter) === normalize(entryPath);
-}
 
 /**
  * @param {import('rollup').InputOption} input
