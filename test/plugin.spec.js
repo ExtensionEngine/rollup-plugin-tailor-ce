@@ -3,13 +3,15 @@
 /* eslint-env jest */
 
 const { createLocalVue, mount } = require('@vue/test-utils');
-const { mkdirSync, writeFile } = require('fs');
 const { Bundler } = require('bili');
+const fs = require('fs');
 const path = require('path');
 const pkg = require('./fixtures/package.json');
+const { promisify } = require('util');
 const requireFromString = require('require-from-string');
 
 const isObject = arg => arg !== null && typeof arg === 'object';
+const writeFile = promisify(fs.writeFile);
 
 const isDebug = process.env.DEBUG;
 const outputFilename = `${pkg.name}.js`;
@@ -20,7 +22,7 @@ let tmpDir;
 
 if (isDebug) {
   tmpDir = path.join(__dirname, `.tmp_${Date.now()}`);
-  mkdirSync(tmpDir);
+  fs.mkdirSync(tmpDir);
 }
 
 process.chdir(rootDir);
@@ -31,11 +33,11 @@ test('compile example using bili', async () => {
   asset = bundle.get(outputFilename);
   expect(asset && asset.source).toContain(pkg.tailor.type);
   if (isDebug) {
-    return writeFile(path.join(tmpDir, outputFilename), asset.source, 'utf-8');
+    await writeFile(path.join(tmpDir, outputFilename), asset.source, 'utf-8');
   }
 });
 
-test('verify default exports', async () => {
+test('verify default exports', () => {
   const plugin = requireFromString(asset.source);
   expect(typeof plugin.default).toBe('function');
   expect(typeof plugin.install).toBe('function');
@@ -48,14 +50,14 @@ test('verify default exports', async () => {
   expect(options.ui).toEqual(pkg.tailor.ui);
 });
 
-test('verify named exports', async () => {
+test('verify named exports', () => {
   const plugin = requireFromString(asset.source);
   const { options, Edit, Greet } = plugin;
   expect(options.components.Edit).toBe(Edit);
   expect(options.components.Greet).toBe(Greet);
 });
 
-test('register content element', async () => {
+test('register content element', () => {
   const plugin = requireFromString(asset.source);
   const localVue = createLocalVue();
   localVue.onInstall = jest.fn();
@@ -69,7 +71,7 @@ test('register content element', async () => {
   expect(GreetCtor && GreetCtor.options).toMatchObject(options.components.Greet);
 });
 
-test('mount edit component', async () => {
+test('mount edit component', () => {
   const { options } = requireFromString(asset.source);
   const element = {
     data: {
@@ -81,7 +83,7 @@ test('mount edit component', async () => {
   expect(wrapper.html()).toMatch(/<div class="tce-example">\s*<div>Hello world!<\/div>\s*<\/div>/);
 });
 
-test('mount greet component', async () => {
+test('mount greet component', () => {
   const { options } = requireFromString(asset.source);
   const propsData = { name: 'Tailor' };
   const wrapper = mount(options.components.Greet, { propsData });
